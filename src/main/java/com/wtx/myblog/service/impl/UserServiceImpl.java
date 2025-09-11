@@ -1,21 +1,14 @@
 package com.wtx.myblog.service.impl;
 
 import com.wtx.myblog.constant.CodeType;
-import com.wtx.myblog.mapper.StuMapper;
 import com.wtx.myblog.mapper.UserMapper;
 import com.wtx.myblog.model.User;
-import com.wtx.myblog.model.pojo.Stu;
-import com.wtx.myblog.service.StuService;
 import com.wtx.myblog.service.UserService;
 import com.wtx.myblog.utils.DataMap;
-import com.wtx.myblog.utils.MD5Util;
 import com.wtx.myblog.utils.StringCleanTrim;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Date;
-import java.util.regex.Pattern;
 
 /**
  * @author 26989

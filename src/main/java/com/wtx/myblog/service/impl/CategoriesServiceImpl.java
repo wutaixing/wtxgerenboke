@@ -48,43 +48,40 @@ public class CategoriesServiceImpl implements CategoriesService {
     }
 
     @Override
-    @Transactional
-    public DataMap insert(String categoryName) {
-        try {
-            // 查询分类是否已存在
-            Categories category = categoriesMapper.findByCategoryName(categoryName);
-            if (category != null){
+    public DataMap updateCategory(String categoryName, int type) {
+
+        int isExistCategoryName = categoriesMapper.findIsExistByCategoryName(categoryName);
+        // 判断是新增还是删除
+        if(type == 1){
+            // 如果是1则为新增
+            if(isExistCategoryName == 0){
+                // 没有查询到分类
+                Categories categories = new Categories();
+                categories.setCategoryName(categoryName);
+                categoriesMapper.saveCategories(categories);
+                int newCategoriesId = categoriesMapper.findIsExistByCategoryName(categoryName);
+                return DataMap.success(CodeType.ADD_CATEGORY_SUCCESS).setData(newCategoriesId);
+            }else{
                 return DataMap.fail(CodeType.CATEGORY_EXIST);
             }
-            int result = categoriesMapper.insert(categoryName);
-            if (result > 0){
-                return DataMap.success(CodeType.ADD_CATEGORY_SUCCESS);
-            }else {
-                return DataMap.fail(CodeType.SERVER_EXCEPTION);
-            }
-        } catch (Exception e) {
-            log.error("【添加分类】发生异常！", e);
-            return DataMap.fail(CodeType.SERVER_EXCEPTION);
-        }
-    }
-
-    @Override
-    @Transactional
-    public DataMap delete(String categoryName) {
-        try {
-            Categories category = categoriesMapper.findByCategoryName(categoryName);
-            if (category == null){
-                return DataMap.fail(CodeType.CATEGORY_NOT_EXIST);
-            }
-            int result = categoriesMapper.delete(categoryName);
-            if (result > 0){
+        }else{
+            // 删除
+            if(isExistCategoryName != 0){
+                //TODO 查询到分类下面对应有多少文章
+                // 如果查询出来的文章数量不为空，则返回提示”分类下存在文章，删除失败“
+                categoriesMapper.deleteCategory(categoryName);
                 return DataMap.success(CodeType.DELETE_CATEGORY_SUCCESS);
             }else{
                 return DataMap.fail(CodeType.CATEGORY_NOT_EXIST);
             }
-        } catch (Exception e) {
-            log.error("【删除分类】发生异常！", e);
-            return DataMap.fail(CodeType.SERVER_EXCEPTION);
         }
     }
+
+    @Override
+    public DataMap findCategoriesNames() {
+        List<String> categoriesNames = categoriesMapper.findCategoriesNames();
+        return DataMap.success().setData(categoriesNames);
+    }
+
+
 }

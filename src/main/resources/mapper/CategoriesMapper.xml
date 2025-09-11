@@ -1,21 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.wtx.myblog.mapper.CategoriesMapper">
-    <insert id="insert">
+    <insert id="saveCategories">
         insert into categories(categoryName) values(#{categoryName})
     </insert>
-    <delete id="delete">
+    <delete id="deleteCategory">
         delete from categories where categoryName=#{categoryName}
     </delete>
-
-
     <select id="getArticleCategories" resultType="com.wtx.myblog.model.Categories">
         select * from categories
     </select>
-    <select id="findByCategoryName" resultType="com.wtx.myblog.model.Categories">
-        select * from categories where categoryName=#{categoryName}
-    </select>
-    <select id="findCategoriesName" resultType="java.lang.String">
+    <select id="findCategoriesNames" resultType="java.lang.String">
         select categoryName from categories
+    </select>
+    <select id="findIsExistByCategoryName" resultType="java.lang.Integer">
+        SELECT IFNULL((SELECT
+                           id
+                       FROM
+                           categories
+                       WHERE
+                           categoryName = #{categoryName})
+        ,0)
     </select>
 </mapper>

@@ -2,20 +2,14 @@ package com.wtx.myblog.controller;
 
 import com.wtx.myblog.constant.CodeType;
 import com.wtx.myblog.model.User;
-import com.wtx.myblog.model.info.RegisterInfo;
 import com.wtx.myblog.service.UserService;
 import com.wtx.myblog.utils.DataMap;
 import com.wtx.myblog.utils.JsonResult;
 import com.wtx.myblog.utils.MD5Util;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.ModelAndView;
-
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
 /**
  * @author 26989

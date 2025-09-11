@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -25,6 +26,13 @@ public class CategoriesController {
     @Autowired
     private CategoriesService categoriesService;
 
+    /**
+     * @description: //TODO 查询分类列表接口
+     * @param: 
+     * @return: java.lang.String
+     * @author 26989
+     * @date: 2025/9/11 16:23
+    */
     @GetMapping("/getArticleCategories")
     public String getArticleCategories() {
         try {
@@ -36,16 +44,44 @@ public class CategoriesController {
         // 失败
         return JsonResult.fail(CodeType.SERVER_EXCEPTION).toJSON();
     }
-
+    
+    /**
+     * @description: //TODO 根据分类名称修改分类接口
+     * @param: categoryName
+     * @param: type
+     * @return: java.lang.String
+     * @author 26989
+     * @date: 2025/9/11 16:49
+    */
     @PostMapping("/updateCategory")
-    public String updateCategory(String categoryName,String type){
+    public String updateCategory(@RequestParam(value = "categoryName") String categoryName,@RequestParam (value = "type") int type){
         //type 1:增加 2:删除
-        DataMap result = null;
-        if("1".equals(type)){
-            result = categoriesService.insert(categoryName);
-        }else if("2".equals(type)){
-            result = categoriesService.delete(categoryName);
+        try {
+            DataMap data = categoriesService.updateCategory(categoryName, type);
+            return JsonResult.build(data).toJSON();
+        } catch (Exception e) {
+            log.error("CategoriesController updateCategory", e);
         }
-        return JsonResult.build(result).toJSON();
+        // 失败
+        return JsonResult.fail(CodeType.SERVER_EXCEPTION).toJSON();
+    }
+
+    /**
+     * @description: //TODO 查询所有分类名称接口(发表文章页面 下拉列表)
+     * @param:
+     * @return: java.lang.String
+     * @author 26989
+     * @date: 2025/9/11 17:13
+    */
+    @GetMapping("/findCategoriesName")
+    public String findCategoriesName(){
+        try {
+            DataMap data = categoriesService.findCategoriesNames();
+            return JsonResult.build(data).toJSON();
+        } catch (Exception e) {
+            log.error("CategoriesController findCategoriesName", e);
+        }
+        // 失败
+        return JsonResult.fail(CodeType.SERVER_EXCEPTION).toJSON();
     }
 }

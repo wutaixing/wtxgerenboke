@@ -13,8 +13,7 @@ import java.util.List;
  */
 public interface CategoriesService {
     DataMap getArticleCategories();
+    DataMap updateCategory(String categoryName, int type);
 
-    DataMap insert(String categoryName);
-
-    DataMap delete(String categoryName);
+    DataMap findCategoriesNames();
 }

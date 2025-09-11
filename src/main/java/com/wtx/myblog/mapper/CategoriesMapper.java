@@ -18,11 +18,12 @@ public interface CategoriesMapper {
 
     List<Categories> getArticleCategories();
 
-    int insert(@Param("categoryName") String categoryName);
+    List<String> findCategoriesNames();
 
-    int delete(@Param("categoryName") String categoryName);
+    int findIsExistByCategoryName(String categoryName);
 
-    Categories findByCategoryName(@Param("categoryName")String categoryName);
+    void saveCategories(Categories categories);
 
-    List<String> findCategoriesName();
+    void deleteCategory(String categoryName);
+
 }
