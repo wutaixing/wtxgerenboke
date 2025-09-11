@@ -1,7 +1,6 @@
 package com.wtx.myblog.service;
 
 import com.wtx.myblog.model.User;
-import com.wtx.myblog.model.pojo.Stu;
 import com.wtx.myblog.utils.DataMap;
 
 /**
