@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>登录功能测试</title>
+    <script src="https://lib.baomitu.com/jquery/3.3.1/jquery.min.js"></script>
+</head>
+<body>
+    <h1>登录功能测试页面</h1>
+    <form id="loginForm">
+        <div>
+            <label for="phone">手机号:</label>
+            <input type="text" id="phone" name="phone" placeholder="请输入手机号">
+        </div>
+        <div>
+            <label for="password">密码:</label>
+            <input type="password" id="password" name="password" placeholder="请输入密码">
+        </div>
+        <div>
+            <button type="submit" id="loginBtn">登录</button>
+        </div>
+    </form>
+    
+    <div id="result" style="margin-top: 20px; padding: 10px; border: 1px solid #ccc;"></div>
+
+    <script>
+        $(document).ready(function() {
+            $('#loginForm').on('submit', function(e) {
+                e.preventDefault();
+                
+                var phone = $('#phone').val();
+                var password = $('#password').val();
+                
+                console.log('发送登录请求:', {phone: phone, password: password});
+                
+                $.ajax({
+                    type: 'POST',
+                    url: 'http://localhost:8080/login',
+                    dataType: 'json',
+                    data: {
+                        phone: phone,
+                        password: password
+                    },
+                    beforeSend: function(xhr) {
+                        xhr.setRequestHeader("X-Requested-With", "XMLHttpRequest");
+                        xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+                    },
+                    success: function(data) {
+                        console.log('登录响应:', data);
+                        $('#result').html('<h3>登录成功!</h3><pre>' + JSON.stringify(data, null, 2) + '</pre>');
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('登录失败:', xhr, status, error);
+                        $('#result').html('<h3>登录失败!</h3><p>状态码: ' + xhr.status + '</p><p>错误: ' + error + '</p><p>响应: ' + xhr.responseText + '</p>');
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
+
