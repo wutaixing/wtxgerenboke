@@ -1,10 +1,18 @@
 var flag = 1;
 var aCategory = "";
+var autoSaveInterval; // 自动保存定时器
 
 $('#originalAuthorHide').hide();
 $('.articleUrlHide').hide();
 
+// 页面加载时启动自动保存
+$(document).ready(function() {
+    startAutoSave();
+});
+
+// 离开页面前自动保存
 var fnClose = function (e) {
+    saveDraftArticle();
     e.returnValue = '确定离开当前页面吗?';
 };
 window.addEventListener('beforeunload', fnClose);
@@ -39,11 +47,17 @@ $(function () {
 });
 
 var publishBtn = $('.publishBtn');
+var saveDraftBtn = $('.saveDraftBtn'); // 保存草稿按钮
 var articleTitle = $('#zhy-editor-title');
 var articleContent = $('#my-editormd-html-code');
 var noticeBoxTitle = $('.notice-box-title');
 var noticeBoxContent = $('.notice-box-content');
 var noticeBox = $('.notice-box');
+
+// 手动保存草稿按钮点击事件
+saveDraftBtn.click(function() {
+    saveDraftArticle();
+});
 
 publishBtn.click(function () {
     var articleTitleValues = articleTitle.val();
@@ -84,7 +98,125 @@ publishBtn.click(function () {
     }, 3000);
 });
 
+// 保存草稿文章的方法
+function saveDraftArticle() {
+    var articleTitleValue = articleTitle.val();
+    var articleContentValue = testEditor.getMarkdown();
+    
+    // 获取标签数据
+    var tagNum = $('.tag').find('.tag-name').length;
+    var articleTagsValue = [];
+    for (var j = 0; j < tagNum; j++) {
+        articleTagsValue[j] = $('.tag-name').eq(j).html();
+    }
+    
+    // 获取其他表单数据
+    var articleType = $('#select-type');
+    var articleCategories = $('#select-categories');
+    var articleGrade = $('#select-grade');
+    var originalAuthor = $('#originalAuthor');
+    var articleUrl = $('#articleUrl');
+    
+    var articleTypeValue = articleType.val();
+    var articleCategoriesValue = articleCategories.val();
+    var articleGradeValue = articleGrade.val();
+    var originalAuthorValue = originalAuthor.val();
+    var articleUrlValue = articleUrl.val();
+    
+    // 发送保存草稿请求
+    $.ajax({
+        type: "POST",
+        url: "/saveDraftArticle",
+        traditional: true,
+        data: {
+            articleTitle: articleTitleValue,
+            articleContent: articleContentValue,
+            articleTagsValue: articleTagsValue,
+            articleType: articleTypeValue,
+            articleCategories: articleCategoriesValue,
+            articleGrade: articleGradeValue,
+            originalAuthor: originalAuthorValue,
+            articleUrl: articleUrlValue,
+            articleHtmlContent: testEditor.getHTML()
+        },
+        contentType: "application/x-www-form-urlencoded; charset=utf-8",
+        dataType: "json",
+        success: function (data) {
+            if (data['status'] == 101) {
+                $.get("/toLogin", function (data, status, xhr) {
+                    window.location.replace("/login");
+                });
+            } else if (data['status'] == 0) {
+                // 保存成功，显示提示信息
+                showDraftSaveSuccess();
+            } else {
+                // 保存失败
+                showDraftSaveError();
+            }
+        },
+        error: function () {
+            showDraftSaveError();
+        }
+    });
+}
+
+// 显示草稿保存成功的提示
+function showDraftSaveSuccess() {
+    // 如果已经存在成功提示，先移除
+    $('.draft-save-success').remove();
+    
+    var successTip = $('<div class="draft-save-success" style="position: fixed; top: 20px; right: 20px; background: #5eb95e; color: white; padding: 10px 20px; border-radius: 5px; z-index: 9999;">草稿保存成功</div>');
+    $('body').append(successTip);
+    
+    // 3秒后自动消失
+    setTimeout(function() {
+        successTip.fadeOut(function() {
+            successTip.remove();
+        });
+    }, 3000);
+}
+
+// 显示草稿保存失败的提示
+function showDraftSaveError() {
+    // 如果已经存在错误提示，先移除
+    $('.draft-save-error').remove();
+    
+    var errorTip = $('<div class="draft-save-error" style="position: fixed; top: 20px; right: 20px; background: #dd514c; color: white; padding: 10px 20px; border-radius: 5px; z-index: 9999;">草稿保存失败</div>');
+    $('body').append(errorTip);
+    
+    // 3秒后自动消失
+    setTimeout(function() {
+        errorTip.fadeOut(function() {
+            errorTip.remove();
+        });
+    }, 3000);
+}
+
+// 启动自动保存功能（每隔30秒保存一次）
+function startAutoSave() {
+    // 清除已存在的定时器
+    if (autoSaveInterval) {
+        clearInterval(autoSaveInterval);
+    }
+    // 每30秒自动保存一次草稿
+    autoSaveInterval = setInterval(function() {
+        saveDraftArticle();
+    }, 30000); // 30秒
+}
+
+// 停止自动保存功能
+function stopAutoSave() {
+    if (autoSaveInterval) {
+        clearInterval(autoSaveInterval);
+        autoSaveInterval = null;
+    }
+}
+
+// 发布成功后的处理
 function publishSuccessPutIn(data) {
+    // 停止自动保存
+    stopAutoSave();
+    
     $('#removeDiv').html('');
     var sec = $('<div id="all"></div>');
     var success = $('<div class="success"></div>');
@@ -133,19 +265,31 @@ $.ajax({
     error: function () {
     }
 });
+// 获取URL参数的辅助函数
+function getParameterByName(name, url) {
+    if (!url) url = window.location.href;
+    name = name.replace(/[\[\]]/g, '\\$&');
+    var regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)'),
+        results = regex.exec(url);
+    if (!results) return null;
+    if (!results[2]) return '';
+    return decodeURIComponent(results[2].replace(/\+/g, ' '));
+}
 //获得草稿文章
 $.ajax({
     type: "GET",
     url: "/getDraftArticle",
     async: false,
-    data: {},
+    data: {
+        id: getParameterByName("id")
+    },
     dataType: "json",
     success: function (data) {
         if (data['status'] == 103) {
             return;
         }
         if (data['status'] == 0) {
-            $('#tiaozaowang-editor-title').val(data['data']['articleTitle']);
+            $('#zhy-editor-title').val(data['data']['articleTitle']);
             $('#my-editormd-markdown-doc').html(data['data']['articleContent']);
             $('#select-type').val(data['data']['articleType']);
             $('#select-grade').val(data['data']['articleGrade']);

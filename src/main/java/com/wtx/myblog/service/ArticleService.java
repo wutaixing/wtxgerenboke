@@ -14,4 +14,21 @@ public interface ArticleService {
     DataMap getAllArticle(Integer rows, Integer pageNum);
 
     DataMap deleteArticleByid(Integer id);
+
+    DataMap getDraftArticle();
+    DataMap getDraftArticle(Integer id);
+
+    DataMap updateArticle(ArticleRequestVO articleRequestVO);
+
+    DataMap canYouWrite();
+
+    DataMap getUserPersonalInfo();
+
+    DataMap getMyArticles(Integer rows, Integer pageNum);
+
+    DataMap getArticleThumbsUp(Integer rows, Integer pageNum);
+
+    DataMap markLikeAsRead(Integer id);
+
+    DataMap markAllLikesAsRead(String author);
 }

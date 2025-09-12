@@ -2,6 +2,7 @@ package com.wtx.myblog.mapper;
 
 import com.wtx.myblog.model.Article;
 import com.wtx.myblog.model.vo.ArticleRequestVO;
+import com.wtx.myblog.model.vo.IsReadResponseVO;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
@@ -17,8 +18,6 @@ import java.util.List;
 @Repository
 public interface ArticleMapper {
     int insertArticle(@Param("articleRequestVO") ArticleRequestVO articleRequestVO,@Param("tags")String tags);
-    int inserttags(@Param("tagName") String tagName,@Param("tagSize") Integer tagSize);
-
 
     /**
      * 查找早于当前文章的最新文章
@@ -44,4 +43,33 @@ public interface ArticleMapper {
     List<Article> selectAllArticles();
 
     int deleteArticleByid(Integer id);
+
+    Article getDraftArticleById(Integer id);
+
+    int setArticleReleaseStatusById(@Param("id") int id,@Param("status") int status);
+
+    Article getDraftArticleByUserName(String username);
+
+    boolean findArticleByArticleId(Long id);
+
+    Article getArticleIdById(@Param("id") Long id);
+
+    int updateArticleByIdAndArticle(@Param("oldArticle") Article oldArticle, @Param("id") int id);
+
+    List<IsReadResponseVO> getAllIsReadArticleByUserName(String author);
+
+    /**
+     * 统计未读点赞数量
+     */
+    int countUnreadLikesByAuthor(@Param("author") String author);
+
+    /**
+     * 标记单个点赞记录为已读
+     */
+    int markLikeAsRead(@Param("id") Integer id);
+
+    /**
+     * 标记所有点赞记录为已读
+     */
+    int markAllLikesAsRead(@Param("author") String author);
 }

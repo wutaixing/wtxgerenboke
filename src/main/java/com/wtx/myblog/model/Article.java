@@ -92,4 +92,9 @@ public class Article {
      */
     private int likes = 0;
 
+    /**
+     * 发布状态 0:草稿 1:发布
+     */
+    private int releaseStatus;
+
 }

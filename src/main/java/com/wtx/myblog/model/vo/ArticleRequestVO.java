@@ -35,4 +35,7 @@ public class ArticleRequestVO {
     private Integer lastArticleId;
     private Integer nextArticleId;
 
+    // 发表状态 0: 草稿 1: 发表
+    private Integer releaseStatus;
+
 }

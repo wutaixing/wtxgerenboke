@@ -5,10 +5,10 @@
     <insert id="insertArticle">
         insert article(articleId,articleTitle,articleContent,articleTags,articleType,
                articleCategories,originalAuthor,articleUrl,publishDate,articleTabloid,
-               author,updateDate,likes)
+               author,updateDate,likes,releaseStatus)
         values(#{articleRequestVO.id},#{articleRequestVO.articleTitle},#{articleRequestVO.articleContent},#{tags},#{articleRequestVO.articleType},
                 #{articleRequestVO.articleCategories},#{articleRequestVO.originalAuthor},#{articleRequestVO.articleUrl},#{articleRequestVO.publishDate},#{articleRequestVO.articleHtmlContent},
-                #{articleRequestVO.author},#{articleRequestVO.updateDate},#{articleRequestVO.likes})
+                #{articleRequestVO.author},#{articleRequestVO.updateDate},#{articleRequestVO.likes},#{articleRequestVO.releaseStatus})
     </insert>
     <insert id="inserttags">
         insert into tags(tagName,tagSize) values(#{tagName},#{tagSize})
@@ -35,7 +35,41 @@
     </select>
 
     <select id="selectAllArticles" resultType="com.wtx.myblog.model.Article">
-        SELECT * FROM article
+        SELECT * FROM article WHERE releaseStatus = 1
+    </select>
+    <select id="getDraftArticleById" resultType="com.wtx.myblog.model.Article">
+        SELECT * FROM article WHERE id = #{id}
+    </select>
+    <select id="getDraftArticleByUserName" resultType="com.wtx.myblog.model.Article">
+        SELECT * FROM article WHERE author = #{username} AND releaseStatus = 0
+    </select>
+    <select id="findArticleByArticleId" resultType="java.lang.Boolean">
+        SELECT EXISTS(SELECT * FROM article WHERE id = #{articleId})
+    </select>
+    <select id="getDraftArticleArticleIdById" resultType="com.wtx.myblog.model.Article">
+        SELECT * FROM article WHERE id = #{id} AND releaseStatus = 0
+    </select>
+    <select id="getArticleIdById" resultType="com.wtx.myblog.model.Article">
+        SELECT * FROM article WHERE id = #{id}
+    </select>
+    <select id="getAllIsReadArticleByUserName" resultType="com.wtx.myblog.model.vo.IsReadResponseVO">
+        SELECT
+            alr.*,
+            u.username AS praisePeople,
+            a.articleTitle
+        FROM
+            article_likes_record alr
+                JOIN `user` u ON alr.likerId = u.id
+                JOIN article a ON alr.articleId = a.articleId
+        WHERE
+            a.author = #{author}
+    </select>
+    <select id="countUnreadLikesByAuthor" resultType="java.lang.Integer">
+        SELECT COUNT(alr.id)
+        FROM article_likes_record alr
+                 JOIN `user` u ON alr.likerId = u.id
+                 JOIN article a ON alr.articleId = a.articleId
+        WHERE a.author = #{author} AND alr.isRead = 1
     </select>
 
     <!-- 更新文章的上下关系 -->
@@ -53,5 +87,32 @@
     <update id="updateNextArticleLastPointer">
         UPDATE article SET lastArticleId = #{currentArticleId} WHERE articleId = #{nextArticleId}
     </update>
+    <update id="setArticleReleaseStatusById">
+        UPDATE article SET releaseStatus = #{status} WHERE id = #{id}
+    </update>
+    <update id="updateArticleByIdAndArticle">
+        UPDATE article
+        SET articleTitle = #{oldArticle.articleTitle},articleContent = #{oldArticle.articleContent},articleTags = #{oldArticle.articleTags},articleType = #{oldArticle.articleType},
+            articleCategories = #{oldArticle.articleCategories},originalAuthor = #{oldArticle.originalAuthor},articleUrl = #{oldArticle.articleUrl},
+            articleContent = #{oldArticle.articleContent},author = #{oldArticle.author},updateDate = #{oldArticle.updateDate},releaseStatus = #{oldArticle.releaseStatus}
+        WHERE
+            id = #{id}
+    </update>
+    <update id="markLikeAsRead">
+        UPDATE article_likes_record
+        SET
+            isRead = 0
+        WHERE
+            id = #{id}
+    </update>
+    <update id="markAllLikesAsRead">
+        UPDATE article_likes_record alr
+            JOIN `user` u ON alr.likerId = u.id
+            JOIN article a ON alr.articleId = a.articleId
+            SET alr.isRead = 0
+        WHERE
+            a.author = #{author} AND alr.isRead = 1
+    </update>
+
 </mapper>
 
