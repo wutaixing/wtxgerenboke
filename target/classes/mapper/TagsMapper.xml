@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wtx.myblog.mapper.TagsMapper">
+
+    <insert id="inserttags">
+        insert into tags(tagName,tagSize) values(#{tagName},#{tagSize})
+    </insert>
+    <update id="updatetags">
+        update tags set tagSize = #{tagSize} where tagName = #{tagName}
+    </update>
+    <delete id="deleteTagsByArticleTitle">
+        delete from tags where tagName = #{tagName}
+    </delete>
+    <select id="findTagsByArticleTitle" resultType="java.lang.Integer">
+        select tagSize from tags where tagName = #{tagName}
+    </select>
+    <select id="getTagsByArticleTitle" resultType="java.lang.Integer">
+        select tagSize from tags where tagName = #{tagName}
+    </select>
+
+</mapper>
+
