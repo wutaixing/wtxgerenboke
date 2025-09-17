@@ -8,8 +8,11 @@ import com.wtx.myblog.utils.JsonResult;
 import com.wtx.myblog.utils.MD5Util;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
+import java.security.Principal;
+import java.util.Objects;
 
 /**
  * @author 26989
@@ -38,6 +41,25 @@ public class RegisterController {
             return JsonResult.build(data).toJSON();
         } catch (Exception e) {
             log.error("【注册】发生异常！",user, e);
+
+        }
+        // 失败
+        return JsonResult.fail(CodeType.SERVER_EXCEPTION).toJSON();
+    }
+
+    @PostMapping("/getUserPersonalInfo")
+    public String getUserPersonalInfo(@AuthenticationPrincipal Principal principal, HttpServletRequest request) {
+        try {
+            //String username = principal.getName();//问题：获取principal为null
+            Principal userPrincipal = request.getUserPrincipal();
+            if(!Objects.isNull(userPrincipal)){
+                String username = userPrincipal.getName();
+                DataMap dataMap = userService.getUserPersonalInfo(username);
+            return JsonResult.build(dataMap).toJSON();
+            }
+            return JsonResult.fail(CodeType.USER_NOT_LOGIN).toJSON();
+        } catch (Exception e) {
+            log.error("【RegisterController】getUserPersonalInfo 异常！", e);
 
         }
         // 失败

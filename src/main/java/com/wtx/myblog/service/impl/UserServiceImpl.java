@@ -43,29 +43,35 @@ public class UserServiceImpl implements UserService {
         // 清洗字符串空格
         user.setUsername(StringCleanTrim.cleanTrim(user.getUsername()));
         // 判断用户是否异常：用户名长度，用户名特殊字符
-        if(user.getUsername().length() > 35){
+        if (user.getUsername().length() > 35) {
             return DataMap.fail(CodeType.USERNAME_FORMAT_ERROR);
         }
         // 手机号是否存在
         User phoneIsExit = userMapper.phoneIsExit(user.getPhone());
-        if(phoneIsExit != null){
+        if (phoneIsExit != null) {
             return DataMap.fail(CodeType.PHONE_EXIST);
         }
         //
-        if("male".equals(user.getGender())){
+        if ("male".equals(user.getGender())) {
             user.setAvatarImgUrl("www.javatiaozao.com");
-        }else{
+        } else {
             user.setAvatarImgUrl("www.javatiaozao.com");
         }
         userMapper.insertUser(user);
         // 注册成功，配置角色  默认：普通用户
         User userByPhone = userMapper.findUserByPhone(user.getPhone());
-        updateRoleByUserId(userByPhone.getId(),1);
+        updateRoleByUserId(userByPhone.getId(), 1);
         return DataMap.success();
     }
 
+    @Override
+    public DataMap getUserPersonalInfo(String username) {
+        User user = userMapper.getUserPersonalInfo(username);
+        return DataMap.success().setData(user);
+    }
+
     private void updateRoleByUserId(int id, int roleId) {
-        userMapper.updateRoleByUserId(id,roleId);
+        userMapper.updateRoleByUserId(id, roleId);
     }
 
 }

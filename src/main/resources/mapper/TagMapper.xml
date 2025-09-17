@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wtx.myblog.mapper.TagMapper">
+
+    <insert id="saveTags">
+        insert into tags(tagName,tagSize) values (#{tagName},#{tagSize})
+    </insert>
+    <select id="findIsExistTagName" resultType="java.lang.Boolean">
+        select IFNULL(max(id),0) from tags where tagName=#{tagName}
+    </select>
+    <select id="getTagSizeByName" resultType="java.lang.Integer">
+        select DISTINCT tagSize from tags where tagName=#{tagName} GROUP BY tagName
+    </select>
+</mapper>
+

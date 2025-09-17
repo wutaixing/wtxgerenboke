@@ -17,4 +17,6 @@ public interface UserService {
     boolean userNameIsExist(String username);
     // 注册用户
     DataMap insertUser(User user);
+
+    DataMap getUserPersonalInfo(String username);
 }

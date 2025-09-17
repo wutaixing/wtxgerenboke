@@ -1,7 +1,6 @@
 package com.wtx.myblog.mapper;
 
 import com.wtx.myblog.model.Article;
-import com.wtx.myblog.model.vo.ArticleRequestVO;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
@@ -16,7 +15,9 @@ import java.util.List;
 @Mapper
 @Repository
 public interface ArticleMapper {
-    int insertArticle(@Param("articleRequestVO") ArticleRequestVO articleRequestVO,@Param("tags")String tags);
+    void saveArticle(Article article);
+
+
     int inserttags(@Param("tagName") String tagName,@Param("tagSize") Integer tagSize);
 
 
@@ -41,7 +42,19 @@ public interface ArticleMapper {
 
     void updateNextArticleLastPointer(@Param("nextArticleId") Long nextArticleId,@Param("currentArticleId") Long currentArticleId);
 
-    List<Article> selectAllArticles();
+    List<Article> getArticleManagement();
 
-    int deleteArticleByid(Integer id);
+    Article getArticleById(String id);
+
+    void updateLastNextId(@Param("LastOrNextStr") String LastOrNextStr,@Param("updateId") long updateId,@Param("articleId") long articleId);
+
+    void deleteArticle(long articleId);
+
+    Article getArticleByIntId(int id);
+
+    void updateArticleById(Article article);
+
+    String getArticleByArticleId(long articleId);
+
+    String getArticleAuthorByArticleId(long articleId);
 }

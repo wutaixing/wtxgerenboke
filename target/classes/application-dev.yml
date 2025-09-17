@@ -28,3 +28,6 @@ pagehelper:
   reasonable: true
   support-methods-arguments: true
   params: count=countSql
+
+#允许循环引用，防止因循环依赖导致的启动失败。
+spring.main.allow-circle-references: true

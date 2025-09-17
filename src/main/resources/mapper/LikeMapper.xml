@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wtx.myblog.mapper.LikeMapper">
+    <update id="readAllThumbsUp">
+        update article_likes_record set isRead = 0
+    </update>
+
+    <select id="getArticleThumbsUp" resultType="com.wtx.myblog.model.ArticleLikesRecord">
+        select * from article_likes_record order by id desc
+    </select>
+    <select id="getMsgIsNotReadNum" resultType="java.lang.Integer">
+        select count(*) from article_likes_record where isRead = 1
+    </select>
+</mapper>
+

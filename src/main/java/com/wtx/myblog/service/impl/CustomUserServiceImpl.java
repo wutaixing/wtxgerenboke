@@ -1,4 +1,4 @@
-package com.wtx.myblog.config;
+package com.wtx.myblog.service.impl;
 
 import com.wtx.myblog.constant.CodeType;
 import com.wtx.myblog.mapper.UserMapper;

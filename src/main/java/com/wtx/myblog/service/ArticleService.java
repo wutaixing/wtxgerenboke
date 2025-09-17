@@ -1,6 +1,6 @@
 package com.wtx.myblog.service;
 
-import com.wtx.myblog.model.vo.ArticleRequestVO;
+import com.wtx.myblog.model.Article;
 import com.wtx.myblog.utils.DataMap;
 
 /**
@@ -9,9 +9,17 @@ import com.wtx.myblog.utils.DataMap;
  * @description
  */
 public interface ArticleService {
-    DataMap insertArticle(ArticleRequestVO articleRequestVO);
+    DataMap insertArticle(Article article);
 
-    DataMap getAllArticle(Integer rows, Integer pageNum);
+    DataMap getArticleManagement(int rows, int pageNum);
 
-    DataMap deleteArticleByid(Integer id);
+    DataMap deleteArticle(String id);
+
+    Article getArticleById(String id);
+
+    DataMap getDraftArticle(Article article,String[] tagStr,Integer tagsSizeByName);
+
+    DataMap updateArticle(Article article);
+
+    DataMap getMyArticles(int rows, int pageNum);
 }

@@ -2,19 +2,47 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.wtx.myblog.mapper.ArticleMapper">
 
-    <insert id="insertArticle">
-        insert article(articleId,articleTitle,articleContent,articleTags,articleType,
-               articleCategories,originalAuthor,articleUrl,publishDate,articleTabloid,
-               author,updateDate,likes)
-        values(#{articleRequestVO.id},#{articleRequestVO.articleTitle},#{articleRequestVO.articleContent},#{tags},#{articleRequestVO.articleType},
-                #{articleRequestVO.articleCategories},#{articleRequestVO.originalAuthor},#{articleRequestVO.articleUrl},#{articleRequestVO.publishDate},#{articleRequestVO.articleHtmlContent},
-                #{articleRequestVO.author},#{articleRequestVO.updateDate},#{articleRequestVO.likes})
+    <insert id="saveArticle">
+        INSERT INTO article (
+            articleId,
+            author,
+            originalAuthor,
+            articleTitle,
+            articleContent,
+            articleTags,
+            articleType,
+            articleCategories,
+            publishDate,
+            updateDate,
+            articleUrl,
+            articleTabloid,
+            likes,
+            lastArticleId,
+            nextArticleId
+        ) VALUES (
+                     #{articleId},
+                     #{author},
+                     #{originalAuthor},
+                     #{articleTitle},
+                     #{articleContent},
+                     #{articleTags},
+                     #{articleType},
+                     #{articleCategories},
+                     #{publishDate},
+                     #{updateDate},
+                     #{articleUrl},
+                     #{articleTabloid},
+                     #{likes},
+                     #{lastArticleId},
+                     #{nextArticleId}
+                 )
     </insert>
     <insert id="inserttags">
         insert into tags(tagName,tagSize) values(#{tagName},#{tagSize})
     </insert>
-    <delete id="deleteArticleByid">
-        DELETE FROM article WHERE id = #{id}
+
+    <delete id="deleteArticle">
+        DELETE FROM article WHERE articleId = #{articleId}
     </delete>
 
 
@@ -34,8 +62,20 @@
             LIMIT 1
     </select>
 
-    <select id="selectAllArticles" resultType="com.wtx.myblog.model.Article">
-        SELECT * FROM article
+    <select id="getArticleManagement" resultType="com.wtx.myblog.model.Article">
+        SELECT * FROM article order by id desc
+    </select>
+    <select id="getArticleById" resultType="com.wtx.myblog.model.Article">
+        SELECT * FROM article where id = #{id}
+    </select>
+    <select id="getArticleByIntId" resultType="com.wtx.myblog.model.Article">
+        SELECT * FROM article where id = #{id}
+    </select>
+    <select id="getArticleByArticleId" resultType="java.lang.String">
+        SELECT articleTitle FROM article where articleId = #{articleId}
+    </select>
+    <select id="getArticleAuthorByArticleId" resultType="java.lang.String">
+        SELECT author FROM article where articleId = #{articleId}
     </select>
 
     <!-- 更新文章的上下关系 -->
@@ -52,6 +92,28 @@
     <!-- 更新下一篇文章的lastArticleId指向当前文章 -->
     <update id="updateNextArticleLastPointer">
         UPDATE article SET lastArticleId = #{currentArticleId} WHERE articleId = #{nextArticleId}
+    </update>
+    <update id="updateLastNextId">
+       update article set ${LastOrNextStr} = #{updateId} where articleId = #{articleId}
+    </update>
+    <update id="updateArticleById">
+        UPDATE article
+        SET
+            articleId = #{articleId},
+            author = #{author},
+            originalAuthor = #{originalAuthor},
+            articleTitle = #{articleTitle},
+            articleContent = #{articleContent},
+            articleTags = #{articleTags},
+            articleType = #{articleType},
+            articleCategories = #{articleCategories},
+            updateDate = #{updateDate},
+            articleUrl = #{articleUrl},
+            articleTabloid = #{articleTabloid},
+            likes = #{likes},
+            lastArticleId = #{lastArticleId},
+            nextArticleId = #{nextArticleId}
+        WHERE id = #{id}
     </update>
 </mapper>
 
