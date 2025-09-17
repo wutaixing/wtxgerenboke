@@ -32,4 +32,11 @@
                             JOIN user u ON u.id = ur.User_id
         WHERE u.username = #{username}
     </select>
+    <select id="getUserPersonalInfo" resultType="com.wtx.myblog.model.User">
+        SELECT * FROM user WHERE username = #{username}
+    </select>
+    <select id="getUserNameById" resultType="java.lang.String">
+        SELECT username FROM user WHERE id = #{id}
+    </select>
 </mapper>
+
