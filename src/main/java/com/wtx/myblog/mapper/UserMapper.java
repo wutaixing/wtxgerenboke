@@ -31,6 +31,7 @@ public interface UserMapper {
     void updateRecentlyLanded(@Param("phone") String phone,@Param("recentlyLanded") String formatDateForSix);
 
     List<Role> queryRolesBYPhone(String phone);
+    List<Role> queryRolesBYUserName(String username);
 
     void updateRoleByUserId(@Param("userId") int userId,@Param("roleId") int roleId);
 
