@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wtx.myblog.mapper.LikeMapper">
+    <insert id="addFriendLink" useGeneratedKeys="true" keyProperty="id">
+        insert into friendlink(blogger,url) values(#{blogger},#{url})
+    </insert>
+    <update id="readAllThumbsUp">
+        update article_likes_record set isRead = 0
+    </update>
+    <update id="updateFriendLink">
+        update friendlink set blogger = #{friendLink.blogger},url = #{friendLink.url} where id = #{id}
+    </update>
+    <delete id="deleteFriendLink">
+        delete from friendlink where id = #{id}
+    </delete>
+
+    <select id="getArticleThumbsUp" resultType="com.wtx.myblog.model.ArticleLikesRecord">
+        select * from article_likes_record order by id desc
+    </select>
+    <select id="getMsgIsNotReadNum" resultType="java.lang.Integer">
+        select count(*) from article_likes_record where isRead = 1
+    </select>
+    <select id="getFriendLink" resultType="com.wtx.myblog.model.FriendLink">
+        select * from friendlink
+    </select>
+    <select id="findIsExistBylogger" resultType="java.lang.Integer">
+        select id from friendlink where blogger = #{blogger} limit 1
+    </select>
+</mapper>
+
