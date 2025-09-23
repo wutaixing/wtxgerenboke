@@ -39,4 +39,10 @@ public interface UserMapper {
     User getUserPersonalInfo(String username);
 
     String getUserNameById(int id);
+
+    String findUsernameById(int personId);
+
+    int getallUser();
+
+    int getUserIdByUsername(String username);
 }

@@ -38,5 +38,14 @@
     <select id="getUserNameById" resultType="java.lang.String">
         SELECT username FROM user WHERE id = #{id}
     </select>
+    <select id="findUsernameById" resultType="java.lang.String">
+        SELECT username FROM user WHERE id = #{id}
+    </select>
+    <select id="getallUser" resultType="java.lang.Integer">
+        SELECT COUNT(*) FROM user
+    </select>
+    <select id="getUserIdByUsername" resultType="java.lang.Integer">
+        SELECT id FROM user WHERE username = #{username}
+    </select>
 </mapper>
 

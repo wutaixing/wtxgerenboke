@@ -2,3 +2,24 @@
 spring:
   profiles:
     active: dev
+
+  redis:
+    host: 127.0.0.1
+    port: 6379
+    password:
+
+mybatis:
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl # 日志输出
+    map-underscore-to-camel-case: true  # 开启驼峰命名转换
+  mapper-locations: classpath:mapper/*.xml
+  type-aliases-package: com.wtx.myblog.model.pojo
+
+pagehelper:
+  helper-dialect: mysql
+  reasonable: true
+  support-methods-arguments: true
+  params: count=countSql
+
+#允许循环引用，防止因循环依赖导致的启动失败。
+spring.main.allow-circle-references: true

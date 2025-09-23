@@ -1,7 +1,9 @@
 package com.wtx.myblog.mapper;
 
 import com.wtx.myblog.model.ArticleLikesRecord;
+import com.wtx.myblog.model.FriendLink;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -20,4 +22,14 @@ public interface LikeMapper {
     Integer getMsgIsNotReadNum();
 
     void readAllThumbsUp();
+
+    List<FriendLink> getFriendLink();
+
+    void addFriendLink(FriendLink friendLink);
+
+    int findIsExistBylogger(String blogger);
+
+    void updateFriendLink(@Param("friendLink") FriendLink friendLink, @Param("id") String id);
+
+    void deleteFriendLink(String id);
 }

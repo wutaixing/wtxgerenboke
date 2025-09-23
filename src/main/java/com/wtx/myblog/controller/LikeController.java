@@ -1,9 +1,11 @@
 package com.wtx.myblog.controller;
 
 import com.wtx.myblog.constant.CodeType;
+import com.wtx.myblog.model.FriendLink;
 import com.wtx.myblog.service.LikeService;
 import com.wtx.myblog.utils.DataMap;
 import com.wtx.myblog.utils.JsonResult;
+import com.wtx.myblog.utils.StringUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -36,7 +38,7 @@ public class LikeController {
             DataMap data = likeService.getArticleThumbsUp(rows, pageNum);
             return JsonResult.build(data).toJSON();
         } catch (Exception e) {
-            log.error("【ArticleController】getArticleThumbsUp Exception", e);
+            log.error("【LikeController】getArticleThumbsUp Exception", e);
         }
         return JsonResult.fail(CodeType.SERVER_EXCEPTION).toJSON();
     }
@@ -47,14 +49,69 @@ public class LikeController {
      * @return: java.lang.String
      * @author 26989
      * @date: 2025/9/17 23:48
-     * */
+     */
     @GetMapping("/readAllThumbsUp")
     public String readAllThumbsUp() {
         try {
             DataMap data = likeService.readAllThumbsUp();
             return JsonResult.build(data).toJSON();
         } catch (Exception e) {
-            log.error("【ArticleController】readAllThumbsUp Exception", e);
+            log.error("【LikeController】readAllThumbsUp Exception", e);
+        }
+        return JsonResult.fail(CodeType.SERVER_EXCEPTION).toJSON();
+    }
+
+    /**
+     * @description: //TODO 查询友链列表接口
+     * @param:
+     * @return: java.lang.String
+     * @author 26989
+     * @date: 2025/9/20 21:50
+     */
+    @PostMapping("/getFriendLink")
+    public String getFriendLink() {
+        try {
+            DataMap data = likeService.getFriendLink();
+            return JsonResult.build(data).toJSON();
+        } catch (Exception e) {
+            log.error("【LikeController】getFriendLink Exception", e);
+        }
+        return JsonResult.fail(CodeType.SERVER_EXCEPTION).toJSON();
+    }
+
+    /**
+     * @description: //TODO 添加和编辑友链接口
+     * @param:
+     * @return: java.lang.String
+     * @author 26989
+     * @date: 2025/9/20 22:06
+     */
+    @PostMapping("/updateFriendLink")
+    public String updateFriendLink(@RequestParam("id") String id, @RequestParam("blogger") String blogger, @RequestParam("url") String url) {
+        try {
+            DataMap data;
+            FriendLink friendLink = new FriendLink(blogger, url);
+            if (StringUtil.BLANK.equals(id)){
+                //新增
+                data = likeService.addFriendLink(friendLink);
+            }else {
+                //编辑
+                data = likeService.updateFriendLink(friendLink,id);
+            }
+            return JsonResult.build(data).toJSON();
+        } catch (Exception e) {
+            log.error("【LikeController】updateFriendLink Exception", e);
+        }
+        return JsonResult.fail(CodeType.SERVER_EXCEPTION).toJSON();
+    }
+
+    @PostMapping("/deleteFriendLink")
+    public String deleteFriendLink(@RequestParam("id") String id) {
+        try {
+            DataMap data = likeService.deleteFriendLink(id);
+            return JsonResult.build(data).toJSON();
+        } catch (Exception e) {
+            log.error("【LikeController】updateFriendLink Exception", e);
         }
         return JsonResult.fail(CodeType.SERVER_EXCEPTION).toJSON();
     }

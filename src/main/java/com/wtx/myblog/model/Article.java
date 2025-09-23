@@ -95,6 +95,8 @@ public class Article {
     /**
      * 发布状态 0:草稿 1:发布
      */
-    private int releaseStatus;
+    private int isLiked;
+
+
 
 }

@@ -1,6 +1,7 @@
 package com.wtx.myblog.controller;
 
 import com.wtx.myblog.constant.CodeType;
+import com.wtx.myblog.mapper.UserMapper;
 import com.wtx.myblog.model.Article;
 import com.wtx.myblog.service.ArticleService;
 import com.wtx.myblog.service.LikeService;
@@ -9,6 +10,7 @@ import com.wtx.myblog.service.UserService;
 import com.wtx.myblog.utils.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -34,6 +36,9 @@ public class ArticleController {
     private TagService tagService;
     @Autowired
     private UserService userService;
+    @Qualifier("userMapper")
+    @Autowired
+    private UserMapper userMapper;
 
     /**
      * @description: //TODO 获取文章草稿或者修改文章内容接口
@@ -164,6 +169,80 @@ public class ArticleController {
             log.error("【ArticleController】getArticleManagement Exception", e);
         }
         return JsonResult.fail(CodeType.SERVER_EXCEPTION).toJSON();
+    }
+
+    /**
+     * @description: //TODO 获取首页文章内容接口
+     * @param: rows
+     * @param: pageNum
+     * @return: java.lang.String
+     * @author 26989
+    */
+    @PostMapping("/getArticleByArticleId")
+    public String getArticleByArticleId(@RequestParam(value = "articleId") String articleId,HttpServletRequest request,Principal principal) {
+        try {
+            // 获取当前用户ID
+            String name = principal.getName();
+            Integer userId;
+            if (name == null){
+                return JsonResult.fail(CodeType.USER_NOT_LOGIN).toJSON();
+            }else {
+                userId = userMapper.getUserIdByUsername( name);
+            }
+            DataMap data = articleService.getArticleByArticleId(Long.parseLong(articleId), userId);
+            return JsonResult.build(data).toJSON();
+        } catch (Exception e) {
+            log.error("【ArticleController】getArticleByArticleId Exception", e);
+        }
+        return JsonResult.fail(CodeType.SERVER_EXCEPTION).toJSON();
+    }
+
+    /**
+     * 获取文章详情（包含用户点赞状态）
+     * @param articleId 文章ID
+     * @param request HTTP请求
+     * @return 文章详情
+     */
+    @PostMapping("/getArticleDetailByArticleId")
+    public String getArticleDetailByArticleId(@RequestParam(value = "articleId") String articleId,Principal principal,
+                                            HttpServletRequest request) {
+        try {
+            // 获取当前用户ID
+            Integer userId = getCurrentUserId(request);
+            
+            DataMap data = articleService.getArticleDetailByArticleId(Long.parseLong(articleId), userId);
+            return JsonResult.build(data).toJSON();
+        } catch (Exception e) {
+            log.error("【ArticleController】getArticleDetailByArticleId Exception", e);
+        }
+        return JsonResult.fail(CodeType.SERVER_EXCEPTION).toJSON();
+    }
+
+    /**
+     * 获取当前用户ID
+     * @param request HTTP请求
+     * @return 用户ID
+     */
+    private Integer getCurrentUserId(HttpServletRequest request) {
+        try {
+            // 从Session中获取用户ID
+            Object userId = request.getSession().getAttribute("userId");
+            if (userId != null) {
+                return Integer.parseInt(userId.toString());
+            }
+            
+            // 从请求参数中获取用户ID（临时方案）
+            String userIdStr = request.getParameter("userId");
+            if (userIdStr != null && !userIdStr.trim().isEmpty()) {
+                return Integer.parseInt(userIdStr);
+            }
+            
+            // 默认返回测试用户ID 1
+            return 1;
+        } catch (Exception e) {
+            log.warn("获取用户ID失败: " + e.getMessage());
+            return 1; // 默认返回测试用户ID
+        }
     }
 
     /**

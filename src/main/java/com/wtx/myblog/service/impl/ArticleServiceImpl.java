@@ -3,12 +3,16 @@ package com.wtx.myblog.service.impl;
 import com.alibaba.fastjson.JSONObject;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.wtx.myblog.constant.CodeType;
 import com.wtx.myblog.mapper.ArticleMapper;
+import com.wtx.myblog.mapper.StatisticsMapper;
+import com.wtx.myblog.mapper.UserMapper;
 import com.wtx.myblog.model.Article;
 import com.wtx.myblog.service.ArticleService;
 import com.wtx.myblog.utils.*;
 import net.sf.json.JSONArray;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,6 +28,13 @@ public class ArticleServiceImpl implements ArticleService {
 
     @Autowired
     private ArticleMapper articleMapper;
+    @Autowired
+    private StatisticsMapper statisticsMapper;
+    @Autowired
+    ArticleLikesService articleLikesService;
+    @Qualifier("userMapper")
+    @Autowired
+    private UserMapper userMapper;
 
     @Override
     public DataMap insertArticle(Article article) {
@@ -134,6 +145,118 @@ public class ArticleServiceImpl implements ArticleService {
     }
 
     @Override
+    public Map<String, String> findArticleTitleByArticleId(long articleId) {
+        Article articleInfo = articleMapper.getArticleByArticleId(articleId);
+        HashMap<String, String> articleMap = new HashMap<>();
+        if (articleInfo != null){
+            articleMap.put("articleTitle", articleInfo.getArticleTitle());
+            articleMap.put("articleTabloid", articleInfo.getArticleTabloid());
+        }
+        return articleMap;
+    }
+
+    @Override
+    public DataMap getArticleByArticleId(long articleId, Integer userId) {
+        Article article = articleMapper.getArticleByArticleId(articleId);
+        if (article == null) {
+            return DataMap.fail(CodeType.ARTICLE_NOT_EXIST);
+        }else {
+            // 检查用户是否已点赞
+            boolean isLiked = false;
+            if (userId != null) {
+                try {
+                    //检查点赞状态
+                    isLiked = articleLikesService.hasUserLiked(articleId, userId);
+                } catch (Exception e) {
+                    System.err.println("检查用户点赞状态失败: " + e.getMessage());
+                    // 如果检查失败，默认为未点赞
+                    isLiked = false;
+                }
+            }
+            article.setIsLiked(isLiked ? 1 : 0);
+        }
+
+        return DataMap.success().setData(article);
+    }
+
+    @Override
+    public DataMap getArticleDetailByArticleId(long articleId, Integer userId) {
+        try {
+            Article article = articleMapper.getArticleByArticleId(articleId);
+            if (article == null) {
+                return DataMap.fail(CodeType.ARTICLE_NOT_EXIST);
+            }
+
+            // 构建文章详情数据
+            Map<String, Object> dataMap = new HashMap<>();
+            dataMap.put("articleId", article.getArticleId());
+            dataMap.put("articleTitle", article.getArticleTitle());
+            dataMap.put("articleContent", article.getArticleContent());
+            dataMap.put("articleType", article.getArticleType());
+            dataMap.put("publishDate", article.getPublishDate());
+            dataMap.put("originalAuthor", article.getOriginalAuthor());
+            dataMap.put("articleCategories", article.getArticleCategories());
+            dataMap.put("articleTags", StringAndArray.stringToArray(article.getArticleTags()));
+            dataMap.put("articleUrl", "/article/" + article.getArticleId());
+            dataMap.put("likes", article.getLikes());
+            // 检查用户是否已点赞
+            boolean isLiked = false;
+            if (userId != null) {
+                try {
+                    // 注入ArticleLikesService来检查点赞状态
+                    isLiked = articleLikesService.hasUserLiked(articleId, userId);
+                } catch (Exception e) {
+                    System.err.println("检查用户点赞状态失败: " + e.getMessage());
+                    // 如果检查失败，默认为未点赞
+                    isLiked = false;
+                }
+            }
+            dataMap.put("isLiked", isLiked ? 1 : 0);
+
+            // 获取上一篇文章信息
+            Long lastArticleId = article.getLastArticleId();
+            if (lastArticleId != null && lastArticleId != 0) {
+                Article lastArticle = articleMapper.getArticleByArticleId(lastArticleId);
+                if (lastArticle != null) {
+                    dataMap.put("lastStatus", "200");
+                    dataMap.put("lastArticleTitle", lastArticle.getArticleTitle());
+                    dataMap.put("lastArticleUrl", "/article/" + lastArticleId);
+                } else {
+                    dataMap.put("lastStatus", "500");
+                    dataMap.put("lastInfo", "没有上一篇了");
+                }
+            } else {
+                dataMap.put("lastStatus", "500");
+                dataMap.put("lastInfo", "没有上一篇了");
+            }
+
+            // 获取下一篇文章信息
+            Long nextArticleId = article.getNextArticleId();
+            if (nextArticleId != null && nextArticleId != 0) {
+                Article nextArticle = articleMapper.getArticleByArticleId(nextArticleId);
+                if (nextArticle != null) {
+                    dataMap.put("nextStatus", "200");
+                    dataMap.put("nextArticleTitle", nextArticle.getArticleTitle());
+                    dataMap.put("nextArticleUrl", "/article/" + nextArticleId);
+                } else {
+                    dataMap.put("nextStatus", "500");
+                    dataMap.put("nextInfo", "没有下一篇了");
+                }
+            } else {
+                dataMap.put("nextStatus", "500");
+                dataMap.put("nextInfo", "没有下一篇了");
+            }
+
+            return DataMap.success().setData(dataMap);
+
+        } catch (Exception e) {
+            System.err.println("获取文章详情失败: " + e.getMessage());
+            e.printStackTrace();
+            return DataMap.fail(CodeType.SERVER_EXCEPTION);
+        }
+    }
+
+    @Override
     public DataMap getArticleManagement(int rows, int pageNum) {
         //开启分页插件
         PageHelper.startPage(pageNum, rows);
@@ -154,7 +277,7 @@ public class ArticleServiceImpl implements ArticleService {
             articleJson.put("articleUrl", article.getArticleUrl());
             articleJson.put("articleCategories", article.getArticleCategories());
             articleJson.put("originalAuthor", article.getOriginalAuthor());
-            articleJson.put("visitorNum", "999");//TODO 获取文章访问量
+            articleJson.put("visitorNum", statisticsMapper.getvisitorNumByPageName("article/"+article.getArticleId()));//TODO 获取文章访问量
             returnJsonArray.add(articleJson);
         }
         returnJsonObject.put("result", returnJsonArray);

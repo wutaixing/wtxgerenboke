@@ -54,7 +54,35 @@ public interface ArticleMapper {
 
     void updateArticleById(Article article);
 
-    String getArticleByArticleId(long articleId);
+    String getArticleByTitleArticleId(long articleId);
 
     String getArticleAuthorByArticleId(long articleId);
+
+    Article getArticleByArticleId(long articleId);
+
+    int getarticleNum();
+
+    /**
+     * 更新文章点赞数
+     * @param articleId 文章ID
+     * @param likes 点赞数
+     * @return 影响行数
+     */
+    int updateArticleLikes(@Param("articleId") Long articleId, @Param("likes") Integer likes);
+
+    /**
+     * 增加文章点赞数
+     * @param articleId 文章ID
+     * @return 影响行数
+     */
+    int incrementArticleLikes(@Param("articleId") Long articleId);
+
+    /**
+     * 减少文章点赞数
+     * @param articleId 文章ID
+     * @return 影响行数
+     */
+    int decrementArticleLikes(@Param("articleId") Long articleId);
+
+    int getArticleLikesByArticleId(Long articleId);
 }

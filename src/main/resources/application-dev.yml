@@ -11,23 +11,10 @@ spring:
     type: com.alibaba.druid.pool.DruidDataSource
 
 # \u5F00\u542Fmp\u7684\u65E5\u5FD7\uFF08\u8F93\u51FA\u5230\u63A7\u5236\u53F0\uFF09
-mybatis:
-  configuration:
-    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl # 日志输出
-    map-underscore-to-camel-case: true  # 开启驼峰命名转换
-  mapper-locations: classpath:mapper/*.xml
-  type-aliases-package: com.wtx.myblog.model.pojo
+
 
 # 默认头像
 user:
   default:
     avatar: www.javatiaocao.com
 
-pagehelper:
-  helper-dialect: mysql
-  reasonable: true
-  support-methods-arguments: true
-  params: count=countSql
-
-#允许循环引用，防止因循环依赖导致的启动失败。
-spring.main.allow-circle-references: true

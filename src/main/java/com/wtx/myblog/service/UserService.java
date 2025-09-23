@@ -19,4 +19,5 @@ public interface UserService {
     DataMap insertUser(User user);
 
     DataMap getUserPersonalInfo(String username);
+
 }

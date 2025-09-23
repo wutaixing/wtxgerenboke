@@ -71,12 +71,22 @@
     <select id="getArticleByIntId" resultType="com.wtx.myblog.model.Article">
         SELECT * FROM article where id = #{id}
     </select>
-    <select id="getArticleByArticleId" resultType="java.lang.String">
+    <select id="getArticleByTitleArticleId" resultType="java.lang.String">
         SELECT articleTitle FROM article where articleId = #{articleId}
     </select>
     <select id="getArticleAuthorByArticleId" resultType="java.lang.String">
         SELECT author FROM article where articleId = #{articleId}
     </select>
+    <select id="getArticleByArticleId" resultType="com.wtx.myblog.model.Article">
+        SELECT * FROM article where articleId = #{articleId}
+    </select>
+    <select id="getarticleNum" resultType="java.lang.Integer">
+        SELECT COUNT(*) FROM article
+    </select>
+    <select id="getArticleLikesByArticleId" resultType="java.lang.Integer">
+        SELECT likes FROM article where articleId = #{articleId}
+    </select>
+
 
     <!-- 更新文章的上下关系 -->
     <update id="updateArticleRelations">
@@ -114,6 +124,30 @@
             lastArticleId = #{lastArticleId},
             nextArticleId = #{nextArticleId}
         WHERE id = #{id}
+    </update>
+
+    <!-- 更新文章点赞数 -->
+    <update id="updateArticleLikes">
+        UPDATE article
+        SET likes = #{likes}
+        WHERE articleId = #{articleId}
+    </update>
+
+    <!-- 增加文章点赞数 -->
+    <update id="incrementArticleLikes">
+        UPDATE article
+        SET likes = likes + 1
+        WHERE articleId = #{articleId}
+    </update>
+
+    <!-- 减少文章点赞数 -->
+    <update id="decrementArticleLikes">
+        UPDATE article
+        SET likes = CASE 
+            WHEN likes > 0 THEN likes - 1 
+            ELSE 0 
+        END
+        WHERE articleId = #{articleId}
     </update>
 </mapper>
 

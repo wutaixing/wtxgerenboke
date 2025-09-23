@@ -1,6 +1,7 @@
 package com.wtx.myblog.controller;
 
 
+import com.wtx.myblog.service.ArticleService;
 import com.wtx.myblog.utils.StringUtil;
 import com.wtx.myblog.utils.TransCodingUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +27,8 @@ public class BackControl {
 
     private static final String SLASH_SYMBOL = "/";
 
+    @Autowired
+    private ArticleService articleService;
 
     /**
      * 跳转首页
@@ -126,7 +129,7 @@ public class BackControl {
     /**
      * 跳转到文章显示页
      */
-    /*@GetMapping("/article/{articleId}")
+    @GetMapping("/article/{articleId}")
     public String show(@PathVariable("articleId") long articleId,
                        HttpServletResponse response,
                        Model model,
@@ -148,7 +151,7 @@ public class BackControl {
         //将文章id存入响应头
         response.setHeader("articleId",String.valueOf(articleId));
         return "show";
-    }*/
+    }
 
     /**
      * 跳转到归档页
