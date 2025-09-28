@@ -7,7 +7,9 @@ import com.wtx.myblog.constant.CodeType;
 import com.wtx.myblog.mapper.ArticleMapper;
 import com.wtx.myblog.mapper.StatisticsMapper;
 import com.wtx.myblog.mapper.UserMapper;
+import com.wtx.myblog.mapper.VisitorMapper;
 import com.wtx.myblog.model.Article;
+import com.wtx.myblog.model.Visitor;
 import com.wtx.myblog.service.ArticleService;
 import com.wtx.myblog.utils.*;
 import net.sf.json.JSONArray;
@@ -30,11 +32,12 @@ public class ArticleServiceImpl implements ArticleService {
     private ArticleMapper articleMapper;
     @Autowired
     private StatisticsMapper statisticsMapper;
-    @Autowired
-    ArticleLikesService articleLikesService;
+
     @Qualifier("userMapper")
     @Autowired
     private UserMapper userMapper;
+    @Autowired
+    private VisitorMapper visitorMapper;
 
     @Override
     public DataMap insertArticle(Article article) {
@@ -158,24 +161,8 @@ public class ArticleServiceImpl implements ArticleService {
     @Override
     public DataMap getArticleByArticleId(long articleId, Integer userId) {
         Article article = articleMapper.getArticleByArticleId(articleId);
-        if (article == null) {
-            return DataMap.fail(CodeType.ARTICLE_NOT_EXIST);
-        }else {
-            // 检查用户是否已点赞
-            boolean isLiked = false;
-            if (userId != null) {
-                try {
-                    //检查点赞状态
-                    isLiked = articleLikesService.hasUserLiked(articleId, userId);
-                } catch (Exception e) {
-                    System.err.println("检查用户点赞状态失败: " + e.getMessage());
-                    // 如果检查失败，默认为未点赞
-                    isLiked = false;
-                }
-            }
-            article.setIsLiked(isLiked ? 1 : 0);
-        }
-
+        //当用户查看文章的时候，文章的浏览次数加1，visitor添加一条记录
+        visitorMapper.insertVisitorArticlePage("article/" + articleId);
         return DataMap.success().setData(article);
     }
 
@@ -200,18 +187,7 @@ public class ArticleServiceImpl implements ArticleService {
             dataMap.put("articleUrl", "/article/" + article.getArticleId());
             dataMap.put("likes", article.getLikes());
             // 检查用户是否已点赞
-            boolean isLiked = false;
-            if (userId != null) {
-                try {
-                    // 注入ArticleLikesService来检查点赞状态
-                    isLiked = articleLikesService.hasUserLiked(articleId, userId);
-                } catch (Exception e) {
-                    System.err.println("检查用户点赞状态失败: " + e.getMessage());
-                    // 如果检查失败，默认为未点赞
-                    isLiked = false;
-                }
-            }
-            dataMap.put("isLiked", isLiked ? 1 : 0);
+
 
             // 获取上一篇文章信息
             Long lastArticleId = article.getLastArticleId();
@@ -277,7 +253,8 @@ public class ArticleServiceImpl implements ArticleService {
             articleJson.put("articleUrl", article.getArticleUrl());
             articleJson.put("articleCategories", article.getArticleCategories());
             articleJson.put("originalAuthor", article.getOriginalAuthor());
-            articleJson.put("visitorNum", statisticsMapper.getvisitorNumByPageName("article/"+article.getArticleId()));//TODO 获取文章访问量
+            String pageName = "article/" + article.getArticleId();
+            articleJson.put("visitorNum", getVisitorNum(pageName));// 获取文章访问量
             returnJsonArray.add(articleJson);
         }
         returnJsonObject.put("result", returnJsonArray);
@@ -290,5 +267,20 @@ public class ArticleServiceImpl implements ArticleService {
         pageJson.put("isLastPage", pageInfo.isIsLastPage());
         returnJsonObject.put("pageInfo", pageJson);
         return DataMap.success().setData(returnJsonObject);
+    }
+
+    /**
+     * @description: 查询文章浏览量
+     * @param: pageName
+     * @return: long
+     * @author 26989
+     * @date: 2025/9/23 16:17
+    */
+    private long  getVisitorNum(String pageName) {
+        Visitor visitorNumByPageName = visitorMapper.getVisitorNumByPageName(pageName);
+        if (visitorNumByPageName != null){
+            return visitorNumByPageName.getVisitorNum();
+        }
+        return 0l;
     }
 }

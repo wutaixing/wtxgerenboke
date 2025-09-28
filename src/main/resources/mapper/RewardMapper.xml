@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wtx.myblog.mapper.RewardMapper">
+    <insert id="insertReward" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO reward(fundRaiser, rewardMoney, rewardDate, rewardUrl, fundRaisingSources, fundraisingPlace, remarks) VALUES(#{fundRaiser}, #{rewardMoney}, #{rewardDate}, #{rewardUrl}, #{fundRaisingSources}, #{fundraisingPlace}, #{remarks})
+    </insert>
+
+
+    <select id="getAllReward" resultType="com.wtx.myblog.model.Reward">
+        SELECT * FROM reward ORDER BY rewardDate DESC
+    </select>
+
+    <select id="getRewardById" resultType="com.wtx.myblog.model.Reward">
+        SELECT * FROM reward WHERE id = #{id}
+    </select>
+
+    <delete id="deleteReward">
+        DELETE FROM reward WHERE id = #{id}
+    </delete>
+</mapper>

@@ -47,5 +47,14 @@
     <select id="getUserIdByUsername" resultType="java.lang.Integer">
         SELECT id FROM user WHERE username = #{username}
     </select>
+    <select id="countUserNum" resultType="java.lang.Long">
+        SELECT COUNT(*) FROM user
+    </select>
+    <select id="getUserIdByUserName" resultType="java.lang.Integer">
+        SELECT id FROM user WHERE username = #{username}
+    </select>
+    <select id="getAvatarImgUrlById" resultType="java.lang.String">
+        SELECT avatarImgUrl FROM user WHERE id = #{id}
+    </select>
 </mapper>
 

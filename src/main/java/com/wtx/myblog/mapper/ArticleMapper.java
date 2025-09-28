@@ -85,4 +85,16 @@ public interface ArticleMapper {
     int decrementArticleLikes(@Param("articleId") Long articleId);
 
     int getArticleLikesByArticleId(Long articleId);
+
+    long countarticleNum();
+
+    void updateLikeByArticleId(String articleId);
+
+    int queryLiksByarticleId(String articleId);
+
+    List<Article> getArticleByArticleCategories(@Param("articleCategories") String articleCategories);
+
+    int findArticleNumByCategoryName(String categoriesName);
+
+    List<Article> getAllArticleByArticleCategories();
 }

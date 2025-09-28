@@ -911,11 +911,11 @@ $('.superAdminList .rewardManagement').click(function () {
 
             //删除募捐记录
             updateRewardDelBtn();
-            // $('.deleteReward').click(function () {
-            //     removeRewardMoneyId = $(this).parent().parent().attr("id").substring(1);
-            //     thisRewardMoney = $(this).parent().prev().prev().prev().find('.am-icon-cny').html();
-            //     $('#deleteReward').modal('open');
-            // })
+            $('.deleteReward').click(function () {
+                removeRewardMoneyId = $(this).parent().parent().attr("id").substring(1);
+                thisRewardMoney = $(this).parent().prev().prev().prev().find('.am-icon-cny').html();
+                $('#deleteReward').modal('open');
+            })
 
             //添加募捐记录
             $('.addReward').click(function () {

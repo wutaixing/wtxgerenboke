@@ -1,10 +1,17 @@
 package com.wtx.myblog.model;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 /**
  * @author 26989
  * @date 2025/9/22
  * @description 文章点赞记录实体类
  */
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class ArticleLikesRecord {
     
     private Integer id;
@@ -12,10 +19,7 @@ public class ArticleLikesRecord {
     private Integer likerId;
     private String likeDate;
     private Integer isRead;
-    
-    public ArticleLikesRecord() {
-    }
-    
+
     public ArticleLikesRecord(Long articleId, Integer likerId, String likeDate, Integer isRead) {
         this.articleId = articleId;
         this.likerId = likerId;

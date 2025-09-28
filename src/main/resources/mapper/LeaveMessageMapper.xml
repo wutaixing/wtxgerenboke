@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wtx.myblog.mapper.LeaveMessageMapper">
+
+    <insert id="publishLeaveMessage" useGeneratedKeys="true" keyProperty="id">
+        insert into leave_message_record(pageName,pId,answererId,respondentId,leaveMessageDate,likes,leaveMessageContent,isRead)
+        values(#{pageName},#{pId},#{answererId},#{respondentId},#{leaveMessageDate},#{likes},#{leaveMessageContent},#{isRead})
+    </insert>
+    <select id="getAllLeaveMessage" resultType="com.wtx.myblog.model.LeaveMessage">
+        select * from leave_message_record where pageName=#{pageName} order by id
+    </select>
+    <select id="getIsRead" resultType="java.lang.Integer">
+        select IFNUll(max(id),0) from leave_message_likes_record where pageName=#{pageName} and pId=#{pId} and likerId=#{likerId}
+    </select>
+    <select id="findLeaveMessageById" resultType="java.lang.String">
+        select * from leave_message_record where id=#{id}
+    </select>
+    <select id="findleaveMessageDateById" resultType="java.lang.String">
+        select leaveMessageDate from leave_message_record where id= #{id}
+    </select>
+    <select id="getAllLeaveMessageReply" resultType="com.wtx.myblog.model.LeaveMessage">
+        select * from leave_message_record where pId= #{id} and pageName= #{pageName}
+    </select>
+</mapper>
+

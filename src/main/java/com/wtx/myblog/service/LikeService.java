@@ -1,5 +1,6 @@
 package com.wtx.myblog.service;
 
+import com.wtx.myblog.model.ArticleLikesRecord;
 import com.wtx.myblog.model.FriendLink;
 import com.wtx.myblog.utils.DataMap;
 
@@ -20,4 +21,10 @@ public interface LikeService {
     DataMap updateFriendLink(FriendLink friendLind, String id);
 
     DataMap deleteFriendLink(String id);
+
+    boolean isLiked(Long articleId, String username);
+
+    DataMap updateLikedByArticleId(String articleId);
+
+    void insertArticleLikesRecord(ArticleLikesRecord articleLikesRecord);
 }

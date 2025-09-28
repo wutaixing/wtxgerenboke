@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wtx.myblog.mapper.VisitorMapper">
+    <insert id="insertVisitorArticlePage">
+        INSERT INTO visitor(pageName,visitorNum) VALUES(#{pageName},0)
+    </insert>
+    <update id="updateVisitorBypageName">
+        UPDATE visitor SET visitorNum = #{visitorNum} WHERE pageName = #{pageName}
+    </update>
+
+    <select id="getTotalVisitor" resultType="java.lang.Long">
+        SELECT visitorNum FROM visitor WHERE pageName = 'totalVisitor'
+    </select>
+    <select id="getVisitorNumByPageName" resultType="com.wtx.myblog.model.Visitor">
+        SELECT * FROM visitor WHERE pageName = #{pageName} order by id desc limit 1
+    </select>
+</mapper>
+

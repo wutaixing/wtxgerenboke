@@ -16,4 +16,11 @@ public interface CategoriesService {
     DataMap updateCategory(String categoryName, int type);
 
     DataMap findCategoriesNames();
+
+    DataMap getCategoryArticle(int rows, int pageNum, String category);
+
+    DataMap findCategoriesNameAndArticleNum();
+
+    DataMap getAllCategoryArticle(int rows, int pageNum);
+
 }

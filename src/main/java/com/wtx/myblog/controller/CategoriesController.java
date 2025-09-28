@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 /**
@@ -84,4 +85,43 @@ public class CategoriesController {
         // 失败
         return JsonResult.fail(CodeType.SERVER_EXCEPTION).toJSON();
     }
+
+    /**
+     * @description: //获得分类文章
+     * @param: request
+     * @param: rows
+     * @param: pageNum
+     * @return: java.lang.String
+     * @author 26989
+     * @date: 2025/9/25 13:31
+    */
+    @GetMapping("/getCategoryArticle")
+    public String getCategoryArticle(HttpServletRequest request, @RequestParam(value = "rows") int rows, @RequestParam(value = "pageNum") int pageNum, @RequestParam(value = "category") String category) {
+        try {
+            if (category == null || category.trim().isEmpty()) {
+                DataMap data = categoriesService.getAllCategoryArticle(rows, pageNum);
+                return JsonResult.build(data).toJSON();
+            }else {
+                DataMap data = categoriesService.getCategoryArticle(rows, pageNum, category);
+                return JsonResult.build(data).toJSON();
+            }
+        } catch (Exception e) {
+            log.error("【CategoriesController】getCategoryArticle Exception", e);
+        }
+        return JsonResult.fail(CodeType.SERVER_EXCEPTION).toJSON();
+    }
+
+
+    @GetMapping("/findCategoriesNameAndArticleNum")
+    public String findCategoriesNameAndArticleNum(HttpServletRequest request) {
+        try {
+            DataMap data = categoriesService.findCategoriesNameAndArticleNum();
+            return JsonResult.build(data).toJSON();
+        } catch (Exception e) {
+            log.error("【CategoriesController】findCategoriesNameAndArticleNum Exception", e);
+        }
+        return JsonResult.fail(CodeType.SERVER_EXCEPTION).toJSON();
+    }
+
+
 }

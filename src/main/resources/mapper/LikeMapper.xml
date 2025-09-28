@@ -4,6 +4,9 @@
     <insert id="addFriendLink" useGeneratedKeys="true" keyProperty="id">
         insert into friendlink(blogger,url) values(#{blogger},#{url})
     </insert>
+    <insert id="insertArticleLikesRecord">
+        insert into article_likes_record(articleId,likerId,likeDate,isRead) values(#{articleId},#{likerId},#{likeDate},#{isRead})
+    </insert>
     <update id="readAllThumbsUp">
         update article_likes_record set isRead = 0
     </update>
@@ -25,6 +28,9 @@
     </select>
     <select id="findIsExistBylogger" resultType="java.lang.Integer">
         select id from friendlink where blogger = #{blogger} limit 1
+    </select>
+    <select id="isLiked" resultType="com.wtx.myblog.model.ArticleLikesRecord">
+        select likeDate from article_likes_record where articleId = #{articleId} and likerId = #{likerId}
     </select>
 </mapper>
 

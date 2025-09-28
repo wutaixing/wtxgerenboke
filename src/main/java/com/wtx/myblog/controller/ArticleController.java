@@ -182,12 +182,12 @@ public class ArticleController {
     public String getArticleByArticleId(@RequestParam(value = "articleId") String articleId,HttpServletRequest request,Principal principal) {
         try {
             // 获取当前用户ID
-            String name = principal.getName();
-            Integer userId;
-            if (name == null){
-                return JsonResult.fail(CodeType.USER_NOT_LOGIN).toJSON();
-            }else {
-                userId = userMapper.getUserIdByUsername( name);
+            Integer userId = null;
+            if (principal != null) {
+                String name = principal.getName();
+                if (name != null) {
+                    userId = userMapper.getUserIdByUsername(name);
+                }
             }
             DataMap data = articleService.getArticleByArticleId(Long.parseLong(articleId), userId);
             return JsonResult.build(data).toJSON();

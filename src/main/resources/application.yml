@@ -1,4 +1,4 @@
-# \u6307\u5B9A\u5F00\u53D1\u73AF\u5883
+# 指定开发环境
 spring:
   profiles:
     active: dev
@@ -7,6 +7,23 @@ spring:
     host: 127.0.0.1
     port: 6379
     password:
+# 文件上传配置
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
+  web:
+    resources:
+      static-locations: classpath:/static/,file:${file.upload-dir}
+  # Thymeleaf配置
+  thymeleaf:
+    cache: false
+    encoding: UTF-8
+    mode: HTML
+    prefix: classpath:/templates/
+    suffix: .html
+    servlet:
+      content-type: text/html
 
 mybatis:
   configuration:

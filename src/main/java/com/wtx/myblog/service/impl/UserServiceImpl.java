@@ -70,6 +70,12 @@ public class UserServiceImpl implements UserService {
         return DataMap.success().setData(user);
     }
 
+    @Override
+    public int getUserIdByUserName(String userName) {
+        int userId = userMapper.getUserIdByUserName(userName);
+        return userId;
+    }
+
     private void updateRoleByUserId(int id, int roleId) {
         userMapper.updateRoleByUserId(id, roleId);
     }

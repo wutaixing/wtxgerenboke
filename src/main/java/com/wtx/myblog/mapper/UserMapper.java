@@ -45,4 +45,10 @@ public interface UserMapper {
     int getallUser();
 
     int getUserIdByUsername(String username);
+
+    long countUserNum();
+
+    int getUserIdByUserName(@Param("username") String username);
+
+    String getAvatarImgUrlById(int answererId);
 }

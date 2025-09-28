@@ -20,4 +20,5 @@ public interface UserService {
 
     DataMap getUserPersonalInfo(String username);
 
+    int getUserIdByUserName(String userName);
 }

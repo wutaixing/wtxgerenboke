@@ -32,4 +32,8 @@ public interface LikeMapper {
     void updateFriendLink(@Param("friendLink") FriendLink friendLink, @Param("id") String id);
 
     void deleteFriendLink(String id);
+
+    ArticleLikesRecord isLiked(@Param("articleId") Long articleId, @Param("likerId") int likerId);
+
+    void insertArticleLikesRecord(ArticleLikesRecord articleLikesRecord);
 }

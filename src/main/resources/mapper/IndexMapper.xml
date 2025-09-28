@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wtx.myblog.mapper.IndexMapper">
+
+    <select id="getarticleNum" resultType="java.lang.Long">
+        SELECT count(*) FROM article
+    </select>
+    <select id="gettagsNum" resultType="java.lang.Long">
+        SELECT count(*) FROM tags
+    </select>
+    <select id="getmessageNum" resultType="java.lang.Long">
+        SELECT count(*) FROM leave_message_record
+    </select>
+    <select id="getcommentNum" resultType="java.lang.Long">
+        SELECT count(*) FROM comment_record
+    </select>
+    <select id="getAllCommentOrderByDate" resultType="com.wtx.myblog.model.Comment">
+        SELECT * FROM comment_record ORDER BY commentDate DESC
+    </select>
+    <select id="getAllLeaveMessageOrderByDate" resultType="com.wtx.myblog.model.LeaveMessage">
+        SELECT * FROM leave_message_record ORDER BY leaveMessageDate DESC
+    </select>
+    <select id="getAllTagsCloud" resultType="com.wtx.myblog.model.Tags">
+        SELECT * FROM tags ORDER BY tagSize DESC
+    </select>
+    <select id="getCommentNumNotReadNum" resultType="java.lang.Long">
+        SELECT count(*) FROM comment_record WHERE isRead = 1
+    </select>
+    <select id="getMessageNotReadNum" resultType="java.lang.Long">
+        SELECT count(*) FROM leave_message_record WHERE isRead = 1
+    </select>
+</mapper>
+

@@ -9,6 +9,7 @@ import com.wtx.myblog.mapper.UserMapper;
 import com.wtx.myblog.model.ArticleLikesRecord;
 import com.wtx.myblog.model.FriendLink;
 import com.wtx.myblog.service.LikeService;
+import com.wtx.myblog.service.UserService;
 import com.wtx.myblog.utils.DataMap;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
@@ -98,5 +99,23 @@ public class LikeServiceImpl implements LikeService {
     public DataMap deleteFriendLink(String id) {
         likeMapper.deleteFriendLink(id);
         return DataMap.success(CodeType.DELETE_FRIEND_LINK_SUCCESS);
+    }
+
+    @Override
+    public boolean isLiked(Long articleId, String username) {
+        ArticleLikesRecord articleLikesRecord = likeMapper.isLiked(articleId, userMapper.getUserIdByUserName(username));
+        return articleLikesRecord != null ;
+    }
+
+    @Override
+    public DataMap updateLikedByArticleId(String articleId) {
+        articleMapper.updateLikeByArticleId(articleId);
+        int likes = articleMapper.queryLiksByarticleId(articleId);
+        return DataMap.success().setData(likes);
+    }
+
+    @Override
+    public void insertArticleLikesRecord(ArticleLikesRecord articleLikesRecord) {
+        likeMapper.insertArticleLikesRecord(articleLikesRecord);
     }
 }

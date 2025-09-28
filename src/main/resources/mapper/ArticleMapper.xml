@@ -86,6 +86,21 @@
     <select id="getArticleLikesByArticleId" resultType="java.lang.Integer">
         SELECT likes FROM article where articleId = #{articleId}
     </select>
+    <select id="countarticleNum" resultType="java.lang.Long">
+        SELECT COUNT(*) FROM article
+    </select>
+    <select id="queryLiksByarticleId" resultType="java.lang.Integer">
+        SELECT IFNUll(max(likes),0) FROM article where articleId = #{articleId}
+    </select>
+    <select id="getArticleByArticleCategories" resultType="com.wtx.myblog.model.Article">
+        SELECT * FROM article where articleCategories = #{articleCategories} order by id desc
+    </select>
+    <select id="findArticleNumByCategoryName" resultType="java.lang.Integer">
+        SELECT COUNT(*) FROM article where articleCategories = #{articleCategories}
+    </select>
+    <select id="getAllArticleByArticleCategories" resultType="com.wtx.myblog.model.Article">
+        SELECT * FROM article order by id  desc
+    </select>
 
 
     <!-- 更新文章的上下关系 -->
@@ -147,6 +162,11 @@
             WHEN likes > 0 THEN likes - 1 
             ELSE 0 
         END
+        WHERE articleId = #{articleId}
+    </update>
+    <update id="updateLikeByArticleId">
+        UPDATE article
+        SET likes = likes + 1
         WHERE articleId = #{articleId}
     </update>
 </mapper>
